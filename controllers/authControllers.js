@@ -666,7 +666,7 @@ export const googleCallback = (req, res) => {
   }
 };
 
-export const getRefreshToken = async (req, res) => {
+export const getRefreshAndAccessToken = async (req, res) => {
   try {
     const refreshToken = req.signedCookies.refreshToken;
 

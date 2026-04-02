@@ -11,7 +11,7 @@ import {
     enable2FA,
     verifySetup,
     verifyOTP,
-    getRefreshToken,
+    getRefreshAndAccessToken,
     logout,
     terminateAllSessions,
     recoverAccount,
@@ -45,7 +45,7 @@ router.post('/reset-password/:token', resetPassword);
 router.post('/enable-2FA', tokenVerifier, enable2FA);
 router.post('/verify2FA-setup', tokenVerifier, verifySetup);
 router.post('/verify-otp', verifyOTP);
-router.get('/refresh-token', getRefreshToken);
+router.get('/get-session-tokens', getRefreshAndAccessToken);
 router.delete('/logout', logout);
 router.delete('/terminate-all-sessions', terminateAllSessions);
 router.post('/recover-your-account/:recoverToken', recoverAccount);
