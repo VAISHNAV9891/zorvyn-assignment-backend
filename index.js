@@ -1,13 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
-import adminRouter from "./routes/adminRoutes.js";
-import authRouter from "./routes/authRoutes.js";
-import { authLimiter, generalLimiter } from "./middlewares/rateLimiters.js";
 import cors from "cors";
 import passport from 'passport';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import cookieParser from 'cookie-parser';
+
+import { authLimiter, generalLimiter } from "./middlewares/rateLimiters.js";
+
+import adminRouter from "./routes/adminRoutes.js";
+import authRouter from "./routes/authRoutes.js";
+import transactionRouter from "./routes/transactionRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +31,7 @@ app.use(passport.initialize());
 
 app.use('/api/zorvyn-fintech/admin', generalLimiter, adminRouter);
 app.use('/api/zorvyn-fintech/auth', authLimiter, authRouter);
+app.use('/api/zorvyn-fintech/transactions', generalLimiter, transactionRouter);
 
 //Function to start the server
 const startServer = async () => {

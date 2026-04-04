@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 
 
 const userSchema = new mongoose.Schema({
-    username : {type : String, required : true, unique : true},
-    email : {type : String, required : true, unique : true},
+    username : {type : String, required : true, unique : true, trim : true},
+    email : {type : String, required : true, unique : true, trim : true},
     password : {type : String, minLength : 8, select : false},
     role : {type : String, enum : ['Viewer','Admin','Analyst'], default : 'Viewer'},
     isDeleted : {type : Boolean, default : false},
