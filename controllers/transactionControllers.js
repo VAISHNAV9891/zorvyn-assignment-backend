@@ -12,7 +12,7 @@ export const createTransaction = async (req, res) => {
             return res.status(400).json({ success : false, message: 'Error : Amount,type and category is needed to proceed with this action.'});
         }
 
-        //Rejecting early we can also implement this using -> zoi input validator module
+        //Rejecting early we can also implement this using -> zod input validator module
         if(!isNaN(type)){
             return res.status(400).json({ success: false, message: 'Type cannot be a number.' });
         }
