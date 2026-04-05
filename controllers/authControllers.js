@@ -46,8 +46,6 @@ try{
     const salt =  await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password,salt);
 
-
-
     //Create a new user in the database with the hashedPassword
     const newUser = await User.create({
         username : username,
@@ -71,8 +69,9 @@ try{
     })
 
     //Generate the link that we have to send to the user
+    // UPDATED: Added /api/zorvyn-fintech/ route prefix
     const domain = process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
-    const link   = `${domain}/api/auth/signup/verify-email/${rawToken}`;
+    const link   = `${domain}/api/zorvyn-fintech/auth/signup/verify-email/${rawToken}`;
     
     //Send the email using nodemailer
     const isSent = await sendMailService(link,newUser.email,'EMAIL_VERIFY');
@@ -177,9 +176,6 @@ export const login = async (req, res) => {
      }
      
 
-    
-
-    
     // If user exists but has no password, they signed up via OAuth
     if (!user.password) {
       return res.status(400).json({ 
@@ -284,8 +280,6 @@ export const forgetPassword = async (req, res) => {
         message: 'If the account exists, a reset email has been sent'
       });
 
-    
-    
     // Generate random token
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
@@ -297,10 +291,9 @@ export const forgetPassword = async (req, res) => {
       expiresAt: Date.now() + 15 * 60 * 1000
     });
 
+    // UPDATED: Added /api/zorvyn-fintech/ route prefix
     const domain = process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
-    const link = `${domain}/api/auth/reset-password/${rawToken}`;
-
-    
+    const link = `${domain}/api/zorvyn-fintech/auth/reset-password/${rawToken}`;
 
     const isSent = sendMailService(link, user.email, 'RESET_PASSWORD');
 
@@ -382,14 +375,12 @@ export const resetPassword = async (req, res) => {
       expiresAt: Date.now() + 15 * 60 * 1000
     });
 
-
+    // UPDATED: Added /api/zorvyn-fintech/ route prefix
     const prefix =  process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
-    const link = `${prefix}api/auth/recover-your-account/${recoverToken}`;
+    const link = `${prefix}/api/zorvyn-fintech/auth/recover-your-account/${recoverToken}`;
 
     sendMailService(link,user.email,'SECURE_ACCOUNT');
 
-    
-    
     return res.status(200).json({ message: 'Password reset successful' });
   } catch (err) {
     if(err.name === 'CastError') return res.status(400).json({message : 'Data is provided in invalid format.'});
@@ -446,8 +437,9 @@ export const enable2FA = async (req,res) => {
     await user.save();
 
     // Generate QR code URI for authenticator apps
+    // UPDATED: Label for Fintech app
     const uri = generateURI({
-    issuer: "EcommerceBackendAPI",
+    issuer: "ZorvynFintechAPI",
     label: user.username,
     secret,
     });
@@ -511,9 +503,6 @@ export const verifySetup = async (req,res) => {
 
       await Otp.deleteOne({ _id: otpDoc._id });
 
-      
-
-    
     }else if(type === 'APP'){
       //Check if the OTP is valid
     const isValid = verifySync({
@@ -526,10 +515,6 @@ export const verifySetup = async (req,res) => {
     }
     }
 
-
-    
-    
-
     //If our program control reaches here which means OTP given in the request body is valid
     user.isTwoFactorEnabled = true;
     user.twoFactorType = type;
@@ -540,8 +525,6 @@ export const verifySetup = async (req,res) => {
     }else if(type == 'EMAIL'){
       return res.status(200).json({message : 'Email-Based Two-Factor Authentication enabled successfully.'});
     }
-
-    
 
   }catch(error){ 
     if(error.name == 'CastError') return res.status(400).json({message : 'Data is provided in the invalid format.'}); 
@@ -603,8 +586,6 @@ try{
     }
     }
 
-    
-
     //OTP Validation successful so, now just Generate the JWT and send it as the JSON response
     const accessToken = await generateAuthTokens(user,res);
 
@@ -630,19 +611,14 @@ try{
 }
 };
 
-
-
 export const googleCallback = (req, res) => {
   try {
     const user = req.user;
 
-    
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: '3d',
     });
 
-
-   
     return res.status(200).json({
       success: true,
       message: "Google Login Successful",
@@ -663,7 +639,6 @@ export const getRefreshAndAccessToken = async (req, res) => {
       return res.status(401).json({ message: 'Tampered Token detected.' });
     }
 
-    
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
     //Check if exists and it's not used, then mark as used immediately (Atomic operation for more security)
     const tokenDoc = await RefreshToken.findOneAndUpdate(
@@ -758,19 +733,15 @@ export const terminateAllSessions = async (req, res) => {
     
     const refreshToken = req.signedCookies.refreshToken;
     
-    
     if (!refreshToken) return res.status(200).json({ message: 'Already logged out : Please login again to terminate all your active sessions , if any.' });
 
-    
     const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
     const tokenDoc = await RefreshToken.findOne({ tokenHash });
 
-    
     if (tokenDoc) {
        await RefreshToken.deleteMany({ userId: tokenDoc.userId });
     }
 
-    
     res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -798,8 +769,7 @@ try{
   //Hash the token
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-  //Try to find out the token in the database (using atomic locks to handle race conditions and in this case using atomic locks saves some DB resources)
-  //Atomic operations : only one request can go in the data base for searching and updating and every other request wait outside , will go inside once the first request complete it's DB operation.
+  //Try to find out the token in the database
   const tokenDoc = await Token.findOneAndUpdate({
     tokenHash: hashedToken,
     purpose: 'SECURE_ACCOUNT',
@@ -874,9 +844,6 @@ try{
   
   await Token.findByIdAndDelete(tokenDoc._id);
   
-  //If the control reaches here -> which confirms that the provided token is valid and original user/frontend is making request to set a new password 
-  
-
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(newPassword,salt);
 
@@ -884,13 +851,9 @@ try{
 
   if(!user) return res.status(404).json({message : 'User Not Found.'});
 
-  
-
   return res.status(200).json({message : 'Password updated successfully.'});
 
 }catch(error){
-
-
   if(error.name === 'CastError') return res.status(400).json({message : 'Data is provided in invalid format.'});
   return res.status(500).json({message : 'Internal Sever Error.'});
 }

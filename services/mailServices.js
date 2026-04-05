@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'production') {
   transporter = nodemailer.createTransport({
     host: "smtp.sendgrid.net",
     port: 2525,
-    secure: false,
+    secure: true,
     auth: {
       user: "apikey", 
       pass: process.env.SENDGRID_API_KEY,
