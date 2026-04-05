@@ -79,7 +79,7 @@ export const createUser = async(req,res) => {
 
     }catch(error){
         if(error.name === 'CastError') return res.status(400).json({ success: false,message : 'Data is provided in invalid format.' });
-        return res.status(500).json({ success: false,message : 'Internal Server Error.'});
+        return res.status(500).json({ success: false,message : 'Internal Server Error.', error : error.message});
     }
 };
 
