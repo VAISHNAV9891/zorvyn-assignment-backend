@@ -55,14 +55,6 @@ try{
         password : hashedPassword
     });
 
-    //Eager creation
-    //Create and Assign a Cart to this new user 
-    const cart = await Cart.create({
-        user : newUser._id
-    })
-
-    newUser.cart = cart._id;
-    await newUser.save();
 
     //Generate a token
     const rawToken = crypto.randomBytes(32).toString('hex');
@@ -132,8 +124,7 @@ try{
            _id : user._id,
         username : user.username,
         email : user.email,
-        role : user.role,
-        cart : user.cart
+        role : user.role
         }
    });
 
@@ -255,8 +246,7 @@ export const login = async (req, res) => {
         _id: user._id,
         role: user.role,
         username: user.username,
-        email: user.email,
-        cart: user.cart
+        email: user.email
       }
     });
     
@@ -629,8 +619,7 @@ try{
         _id: user._id,
         role: user.role,
         username: user.username,
-        email: user.email,
-        cart: user.cart
+        email: user.email
       }
     });
    
