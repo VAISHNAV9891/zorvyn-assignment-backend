@@ -13,11 +13,17 @@ import authRouter from "./routes/authRoutes.js";
 import transactionRouter from "./routes/transactionRoutes.js";
 import dashboardRouter from "./routes/dashboardDataRoutes.js";
 
+
+import fs from 'fs';
+import swaggerUi from 'swagger-ui-express';
+const swaggerDocument = JSON.parse(fs.readFileSync('./swagger-output.json', 'utf-8'));
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 let server;
 
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors({
     origin: true, 
     credentials: true 
