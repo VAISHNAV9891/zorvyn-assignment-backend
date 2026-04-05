@@ -79,7 +79,7 @@ try{
     })
 
     //Generate the link that we have to send to the user
-    const domain = process.env.FRONTEND_URL || 'https://ecommerceapi-nh2j.onrender.com';
+    const domain = process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
     const link   = `${domain}/api/auth/signup/verify-email/${rawToken}`;
     
     //Send the email using nodemailer
@@ -184,7 +184,7 @@ export const login = async (req, res) => {
       return res.status(400).json({message : 'You cannot perform this action.'});
       }
      }
-      
+     
 
     
 
@@ -307,7 +307,7 @@ export const forgetPassword = async (req, res) => {
       expiresAt: Date.now() + 15 * 60 * 1000
     });
 
-    const domain = process.env.FRONTEND_URL || 'https://ecommerceapi-nh2j.onrender.com';
+    const domain = process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
     const link = `${domain}/api/auth/reset-password/${rawToken}`;
 
     
@@ -393,7 +393,7 @@ export const resetPassword = async (req, res) => {
     });
 
 
-    const prefix =  process.env.FRONTEND_URL || 'https://ecommerceapi-nh2j.onrender.com';
+    const prefix =  process.env.FRONTEND_URL || 'https://zorvyn-assignment-backend-scaa.onrender.com';
     const link = `${prefix}api/auth/recover-your-account/${recoverToken}`;
 
     sendMailService(link,user.email,'SECURE_ACCOUNT');
