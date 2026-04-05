@@ -12,6 +12,10 @@ A production-grade, highly scalable RESTful API built for managing enterprise-le
 
 ---
 
+* **🌐 Live Server (Render):** https://zorvyn-assignment-backend-scaa.onrender.com
+* **📄 API Documentation (Postman):** https://zorvyn-assignment-backend-scaa.onrender.com/api-docs
+
+
 ## 🏛️ Architecture & System Design
 This project strictly follows the **Model-View-Controller (MVC)** architecture to ensure "Separation of Concerns" and maintainability at scale.
 
@@ -42,45 +46,37 @@ Granular permission levels implemented via custom JWT middlewares:
 
 ---
 
-⚙️ Local Installation & Setup
-1. Clone the Repository
+### 5. How to try this system ?
 
-Bash
-git clone <repository-url>
-cd finance-control-backend
-2. Install Dependencies
+**Way 1 -> Test the API endpoints using Swagger Documentation (Live)**
+You can directly interact with and test the live endpoints without installing anything on your machine.
+👉 [Click here to open Swagger UI](http://localhost:5000/api-docs) *(Update with live link if deployed)*
 
-Bash
+**Way 2 -> If you want to test this system locally, follow the steps given below:**
+
+**Step 1: Prerequisites**
+Ensure you have [Node.js](https://nodejs.org/) installed on your system. You will also need an API testing client like [Postman](https://www.postman.com/downloads/) or thunder client.
+
+**Step 2: Clone and Install Dependencies**
+```bash
+git clone https://github.com/VAISHNAV9891/zorvyn-assignment-backend
+cd src
 npm install
-3. Environment Variables
-Create a .env file in the root directory:
 
-Code snippet
-PORT=5000
-NODE_ENV=development
-MONGO_URL=mongodb://localhost:27017/finance_control
-JWT_SECRET_KEY=super_secret_jwt_key_123
-JWT_EXPIRES_IN=24h
-4. Start the Server
 
-Bash
-# Run in development mode (with Nodemon)
-npm run dev
-📡 API Documentation & Testing
-Once the server is running, you can access the interactive API documentation and test the endpoints directly from your browser:
 
-👉 Swagger UI: http://localhost:5000/api-docs
+## 🧪 Testing Credentials
+To facilitate quick testing of the live API or via the Postman collection, use these pre-configured accounts. Each account is bound to a specific role to demonstrate the **Role-Based Access Control (RBAC)** in action.
 
-Demo Credentials for Testing
-If you are testing the Role-Based Access Control, use these standard mock profiles:
-| Role | Access Capabilities |
-| :--- | :--- |
-| Admin | Full access (CRUD operations + Dashboards) |
-| Analyst| View Ledger List + Dashboards |
-| Viewer | View Dashboards ONLY (Cannot view individual transactions) |
+| Role | Email | Password | Access Capabilities |
+| :--- | :--- | :--- | :--- |
+| **👑 Admin** | `admin@finance.com` | `admin123` | Full access (CRUD operations on Ledger + View all Dashboards) |
+| **👁️ Analyst**| `analyst@finance.com` | `analyst123` | Read-Only (View paginated Ledger List + View Dashboards) |
+| **👤 Viewer** | `viewer@finance.com` | `viewer123` | Restricted (View Dashboards ONLY, no access to individual records) |
+
+> **Tip:** Pass the JWT token received from the `/login` endpoint as a Bearer Token in the `Authorization` header for subsequent requests.
 
 🛡️ Data Integrity
 Soft Deletes: Records are never permanently deleted from the DB (isDeleted: true flag is toggled). This ensures accurate historical auditing.
-
 Regex Text Search: Implemented case-insensitive partial matching ($regex with i flag) for smart and intuitive category filtering.
 
