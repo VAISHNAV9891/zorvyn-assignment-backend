@@ -50,7 +50,7 @@ Granular permission levels implemented via custom JWT middlewares:
 
 **Way 1 -> Test the API endpoints using Swagger Documentation (Live)**
 You can directly interact with and test the live endpoints without installing anything on your machine.
-👉 [Click here to open Swagger UI](http://localhost:5000/api-docs) *(Update with live link if deployed)*
+👉 [Click here to open Swagger UI](https://zorvyn-assignment-backend-scaa.onrender.com/api-docs) *(Update with live link if deployed)*
 
 **Way 2 -> If you want to test this system locally, follow the steps given below:**
 
@@ -60,7 +60,7 @@ Ensure you have [Node.js](https://nodejs.org/) installed on your system. You wil
 **Step 2: Clone and Install Dependencies**
 ```bash
 git clone https://github.com/VAISHNAV9891/zorvyn-assignment-backend
-cd src
+cd zorvyn-assignment-backend
 npm install
 ```
 
@@ -68,14 +68,14 @@ npm install
 ```bash
 cat <<EOF > .env
 PORT=5000
-NODE_ENV=development
+NODE_ENV="development"
 MONGO_URL=mongodb://localhost:27017/finance_control
 JWT_SECRET_KEY=super_secret_jwt_key_123
 JWT_EXPIRES_IN=24h
 EOF
 ```
 
-**Step 4: Start the server in development mode**
+**Step 4: Start the server in development mode(locally)**
 ```bash
 node index.js
 ```
@@ -87,13 +87,15 @@ To facilitate quick testing of the live API or via the Postman collection, use t
 
 | Role | Email | Password | Access Capabilities |
 | :--- | :--- | :--- | :--- |
-| **👑 Admin** | `admin@finance.com` | `admin123` | Full access (CRUD operations on Ledger + View all Dashboards) |
-| **👁️ Analyst**| `analyst@finance.com` | `analyst123` | Read-Only (View paginated Ledger List + View Dashboards) |
-| **👤 Viewer** | `viewer@finance.com` | `viewer123` | Restricted (View Dashboards ONLY, no access to individual records) |
+| **👑 Admin** | email : `admin@finance.com` | password : `Admin@123` | Full access (CRUD operations on Ledger + View all Dashboards) |
+| **👁️ Analyst**| email : `analyst@finance.com` | password : `Analyst@123` | Read-Only (View paginated Ledger List + View Dashboards) |
+| **👤 Viewer** | email : `viewer@finance.com` | password : `Viewer@123` | Restricted (View Dashboards ONLY, no access to individual records) |
 
 > **Tip:** Pass the JWT token received from the `/login` endpoint as a Bearer Token in the `Authorization` header for subsequent requests.
 
-🛡️ Data Integrity
-Soft Deletes: Records are never permanently deleted from the DB (isDeleted: true flag is toggled). This ensures accurate historical auditing.
-Regex Text Search: Implemented case-insensitive partial matching ($regex with i flag) for smart and intuitive category filtering.
+## 🛡️ Data Integrity & Security
+- **NoSQL Injection Protection:** Integrated `express-mongo-sanitize` to actively strip out potentially malicious MongoDB operators (like `$gt`, `$eq`, `.`) from user-supplied data (`req.body`, `req.query`, `req.params`). 
+  - *Why?* This is a critical security measure to prevent attackers from bypassing authentication or manipulating database queries using advanced NoSQL injection techniques.
+- **Soft Deletes:** Records are never permanently deleted from the DB (`isDeleted: true` flag is toggled). This ensures accurate historical auditing.
+- **Regex Text Search:** Implemented case-insensitive partial matching (`$regex` with `i` flag) for smart and intuitive category filtering.
 
