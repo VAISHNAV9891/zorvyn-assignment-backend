@@ -51,7 +51,7 @@ export const createTransaction = async (req, res) => {
             return res.status(400).json({ success: false, message: error.message });
         }
         if (error.name === 'CastError') {
-            return res.status(400).json({ success: false, message: 'Invalid data format provided.' });
+            return res.status(400).json({ success: false, message: 'Data is provided in invalid format.' });
         }
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -182,6 +182,31 @@ export const deleteTransaction = async (req, res) => {
         
         
         return res.status(500).json({ success: false, message: 'Internal Server Error.' });
+    }
+};
+
+//Additional route to fetch the transactions by the date it was created
+export const getTransactionsByDate = async (req, res) => {
+    try {
+        //Our system is expecting targetDate in 'YYYY-MM-DD' format
+        const { targetDate } = req.query; 
+        
+        if (!targetDate) return res.status(400).json({ message: "Date is required" });
+
+        const transactions = await Transaction.find({
+            isDeleted: false,
+            date: {
+                $gte: new Date(`${targetDate}T00:00:00.000Z`),
+                $lte: new Date(`${targetDate}T23:59:59.999Z`)
+            }
+        }).sort({ _id: -1 });
+
+        res.status(200).json({ success: true, count: transactions.length, transactions });
+    } catch (error) {
+        if (error.name === 'CastError') {
+            return res.status(400).json({ success: false, message: 'Data is provided in invalid format.' });
+        }
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 

@@ -11,6 +11,7 @@ import { authLimiter, generalLimiter } from "./middlewares/rateLimiters.js";
 import adminRouter from "./routes/adminRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import transactionRouter from "./routes/transactionRoutes.js";
+import dashboardRouter from "./routes/dashboardDataRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use(passport.initialize());
 app.use('/api/zorvyn-fintech/admin', generalLimiter, adminRouter);
 app.use('/api/zorvyn-fintech/auth', authLimiter, authRouter);
 app.use('/api/zorvyn-fintech/transactions', generalLimiter, transactionRouter);
+app.use('/api/zorvyn-fintech/dashboard', generalLimiter, dashboardRouter);
 
 //Function to start the server
 const startServer = async () => {
