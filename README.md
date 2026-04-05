@@ -62,6 +62,23 @@ Ensure you have [Node.js](https://nodejs.org/) installed on your system. You wil
 git clone https://github.com/VAISHNAV9891/zorvyn-assignment-backend
 cd src
 npm install
+```
+
+**Step 3: Create the Environment(.env file)**
+```bash
+cat <<EOF > .env
+PORT=5000
+NODE_ENV=development
+MONGO_URL=mongodb://localhost:27017/finance_control
+JWT_SECRET_KEY=super_secret_jwt_key_123
+JWT_EXPIRES_IN=24h
+EOF
+```
+
+**Step 4: Start the server in development mode**
+```bash
+node index.js
+```
 
 
 
