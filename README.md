@@ -45,6 +45,77 @@ Granular permission levels implemented via custom JWT middlewares:
 - Integrated `swagger-jsdoc` and `swagger-ui-express` for auto-generating interactive API documentation directly from route comments, ensuring docs are never out-of-sync with the codebase.
 
 ---
+## 🛡️ Data Integrity & Security
+- **NoSQL Injection Protection:** Integrated `express-mongo-sanitize` to actively strip out potentially malicious MongoDB operators (like `$gt`, `$eq`, `.`) from user-supplied data (`req.body`, `req.query`, `req.params`). 
+  - *Why?* This is a critical security measure to prevent attackers from bypassing authentication or manipulating database queries using advanced NoSQL injection techniques.
+- **Soft Deletes:** Records are never permanently deleted from the DB (`isDeleted: true` flag is toggled). This ensures accurate historical auditing.
+- **Regex Text Search:** Implemented case-insensitive partial matching (`$regex` with `i` flag) for smart and intuitive category filtering.
+
+### 🔐 Enterprise-Grade Authentication System
+Built with a "Zero-Trust" security mindset, the authentication module goes far beyond basic login logic, ensuring bulletproof user sessions and data safety.
+- **Refresh Token Rotation (RTR) & JWT:** Uses short-lived Access Tokens paired with rotating Refresh Tokens. Every time a new access token is requested, the old refresh token is immediately invalidated, completely neutralizing token theft and replay attacks.
+- **Two-Factor Authentication (2FA):** Implemented an additional layer of security for account access, ensuring that even if credentials are compromised, unauthorized entry is blocked.
+- **Secure Password Recovery:** Fully functional `Forgot Password` and `Reset Password` flows using cryptographically secure, time-bound reset tokens.
+- **Transactional Emails (Nodemailer):** Seamlessly integrated `Nodemailer` to handle automated email dispatches for OTP delivery, password reset links, and critical account alerts.
+
+  ### 🛡️ Admin Module 
+**Base URL:** `http://localhost:5000/api/zorvyn-fintech/admin`
+
+| Method | Complete Endpoint | Allowed Roles | Description |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/create-user` | `Admin` | Create a new user manually from the admin panel. |
+| **PATCH** | `/update-user-role` | `Admin` | Modify an existing user's access role (e.g., Viewer to Analyst). |
+| **GET** | `/get-all-users` | `Admin` | Fetch the complete list of registered users. |
+| **PATCH** | `/update-status` | `Admin` | Freeze/Unfreeze or update a user's account status. |
+| **DELETE** | `/delete-user/:id` | `Admin` | Remove a user account permanently or soft-delete it. |
+
+---
+
+### 🔐 Auth & Security Module (Including OAuth)
+**Base URL:** `/api/zorvyn-fintech/auth`
+
+| Method | Complete Endpoint | Allowed Roles | Description |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/signup` | *Public* | Register a new user account. |
+| **POST** | `/signup/verify-email/:rawToken` | *Public* | Verify newly registered user's email via secure link. |
+| **POST** | `/login` | *Public* | Standard email/password login to generate JWT tokens. |
+| **GET** | `/google` | *Public* | Initiate Google OAuth 2.0 Single Sign-On (SSO). |
+| **GET** | `/google/callback` | *Public* | Google OAuth callback for profile extraction & token generation. |
+| **POST** | `/enable-2FA` | *Logged In User* | Initialize Two-Factor Authentication setup. |
+| **POST** | `/verify2FA-setup` | *Logged In User* | Verify and activate 2FA with the authenticator app. |
+| **POST** | `/verify-otp` | *Public* | Verify OTP during the login or sensitive action flow. |
+| **GET** | `/get-session-tokens` | *Public* | Refresh Token Rotation (RTR) to get a new access token. |
+| **DELETE** | `/logout` | *Public* | Clear current session and invalidate the active token. |
+| **DELETE** | `/terminate-all-sessions`| *Public* | Log out from all devices simultaneously. |
+| **POST** | `/recover-your-account/:recoverToken` | *Public* | Recover account using the email recovery link token. |
+| **POST** | `/reset-frozen-password` | *Public* | Reset password for an account that was frozen/locked. |
+
+---
+
+### 📊 Dashboard & Analytics Module
+**Base URL:** `http://localhost:5000/api/zorvyn-fintech/dashboard`
+
+| Method | Complete Endpoint | Allowed Roles | Description |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/totals` | `Admin, Analyst, Viewer` | Get total income, expenses, and net balance. |
+| **GET** | `/categories` | `Admin, Analyst, Viewer` | Get spending breakdown by category. |
+| **GET** | `/trends/monthly` | `Admin, Analyst, Viewer` | Fetch monthly data points for time-series charts. |
+| **GET** | `/trends/weekly` | `Admin, Analyst, Viewer` | Fetch weekly data points for granular time-series charts. |
+| **GET** | `/recent` | `Admin, Analyst, Viewer` | Get the 5 most recent transactions for the dashboard view. |
+
+---
+
+### 💸 Ledger & Transactions Module
+**Base URL:** `http://localhost:5000/api/zorvyn-fintech/transactions`
+
+| Method | Complete Endpoint | Allowed Roles | Description |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/create-transaction` | `Admin` | Record a new income or expense entry. |
+| **GET** | `/get-transactions` | `Admin, Analyst` | Fetch the paginated list of all transactions. |
+| **GET** | `/transaction/:id` | `Admin, Analyst` | Fetch detailed data for a single, specific transaction. |
+| **GET** | `/get-by-date` | `Admin, Analyst` | Filter and fetch transactions for a specific day. |
+| **PATCH** | `/update-transaction/:id`| `Admin` | Modify an existing transaction (amount, category, etc.). |
+| **DELETE** | `/delete-transaction/:id`| `Admin` | Soft-delete a transaction from the ledger. |
 
 ### 5. How to try this system ?
 
@@ -72,6 +143,15 @@ NODE_ENV="development"
 MONGO_URL=mongodb://localhost:27017/finance_control
 JWT_SECRET_KEY=super_secret_jwt_key_123
 JWT_EXPIRES_IN=24h
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+SENDGRID_API_KEY=
+SENDGRID_FROM=
+COOKIE_SECRET=
+
+//FOR DEVELOPMENT MODE ONLY (LOCAL)
+EMAIL_USER=
+EMAIL_PASS=
 EOF
 ```
 
@@ -93,9 +173,4 @@ To facilitate quick testing of the live API or via the Postman collection, use t
 
 > **Tip:** Pass the JWT token received from the `/login` endpoint as a Bearer Token in the `Authorization` header for subsequent requests.
 
-## 🛡️ Data Integrity & Security
-- **NoSQL Injection Protection:** Integrated `express-mongo-sanitize` to actively strip out potentially malicious MongoDB operators (like `$gt`, `$eq`, `.`) from user-supplied data (`req.body`, `req.query`, `req.params`). 
-  - *Why?* This is a critical security measure to prevent attackers from bypassing authentication or manipulating database queries using advanced NoSQL injection techniques.
-- **Soft Deletes:** Records are never permanently deleted from the DB (`isDeleted: true` flag is toggled). This ensures accurate historical auditing.
-- **Regex Text Search:** Implemented case-insensitive partial matching (`$regex` with `i` flag) for smart and intuitive category filtering.
 
