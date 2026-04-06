@@ -5,6 +5,7 @@ import cors from "cors";
 import passport from 'passport';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import cookieParser from 'cookie-parser';
+import './config/passport.js';
 
 import { authLimiter, generalLimiter } from "./middlewares/rateLimiters.js";
 

@@ -8,11 +8,9 @@ export const generateAuthTokens = async (user, res, oldTokenDoc = null) => {
     
     let refreshTokenExpiry;
     
-    if (oldTokenDoc) {
-        
+    if (oldTokenDoc) {    
         refreshTokenExpiry = oldTokenDoc.expiresAt; 
-    } else {
-        
+    } else {       
         refreshTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); 
     }
 

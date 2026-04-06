@@ -611,18 +611,16 @@ try{
 }
 };
 
-export const googleCallback = (req, res) => {
+export const googleCallback = async (req, res) => {
   try {
     const user = req.user;
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: '3d',
-    });
+    const accessToken = await generateAuthTokens(user, res);
 
     return res.status(200).json({
       success: true,
       message: "Google Login Successful",
-      token,
+      accessToken,
       user
     });
 
