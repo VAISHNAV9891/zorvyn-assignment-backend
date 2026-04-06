@@ -14,7 +14,7 @@ A production-grade, highly scalable RESTful API built for managing enterprise-le
 ---
 
 * **🌐 Live Server (Render):** https://zorvyn-assignment-backend-scaa.onrender.com
-* **📄 API Documentation (Postman):** https://zorvyn-assignment-backend-scaa.onrender.com/api-docs
+* **📄 API Documentation (swagger):** https://zorvyn-assignment-backend-scaa.onrender.com/api-docs
 
 
 ## 🏛️ Architecture & System Design
