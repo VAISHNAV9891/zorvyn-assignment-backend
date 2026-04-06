@@ -72,7 +72,7 @@ Built with a "Zero-Trust" security mindset, the authentication module goes far b
 ---
 
 ### 🔐 Auth & Security Module (Including OAuth)
-**Base URL:** `/api/zorvyn-fintech/auth`
+**Base URL:** `http://localhost:5000/api/zorvyn-fintech/auth`
 
 | Method | Complete Endpoint | Allowed Roles | Description |
 | :--- | :--- | :--- | :--- |
