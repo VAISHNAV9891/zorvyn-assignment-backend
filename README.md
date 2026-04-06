@@ -57,6 +57,7 @@ Built with a "Zero-Trust" security mindset, the authentication module goes far b
 - **Two-Factor Authentication (2FA):** Implemented an additional layer of security for account access, ensuring that even if credentials are compromised, unauthorized entry is blocked.
 - **Secure Password Recovery:** Fully functional `Forgot Password` and `Reset Password` flows using cryptographically secure, time-bound reset tokens.
 - **Transactional Emails (Nodemailer):** Seamlessly integrated `Nodemailer` to handle automated email dispatches for OTP delivery, password reset links, and critical account alerts.
+- **GoogleOAuth 2.0 integration to facilitate the google login.
 
   ### 🛡️ Admin Module 
 **Base URL:** `http://localhost:5000/api/zorvyn-fintech/admin`
